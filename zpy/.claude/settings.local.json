@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python test_data_generator.py)",
+      "Bash(cd /mnt/workspace/gbn/project/zpy/analyze && python -c \"\nimport sys\nsys.path.append\\('scripts'\\)\nfrom analyze import run_analyze\n\nresult = run_analyze\\('/mnt/workspace/gbn/project/zpy/test_data.csv'\\)\nprint\\(result['analysis_report']\\)\nprint\\(f'\\\\n质量评分: {result[\\\\\"assess_result\\\\\"][\\\\\"quality_score\\\\\"]}/100'\\)\n\")"
+    ]
+  }
+}
