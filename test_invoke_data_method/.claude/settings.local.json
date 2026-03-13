@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /mnt/workspace/gbn/project/test_invoke_data_method/invoke_data_processor_method && python test_skill.py)",
+      "Bash(cd /mnt/workspace/gbn/project/test_invoke_data_method/invoke_data_processor_method/scripts && python -c \"from data_processor import DataProcessor; print\\('Import successful!'\\)\")",
+      "Bash(cd /mnt/workspace/gbn/project/test_invoke_data_method/invoke_data_processor_method/scripts && mv 01_missing_value.py missing_value.py && mv 02_filter_denoiser.py filter_denoiser.py && mv 03_data_transformer.py data_transformer.py && mv 04_outlier_handler.py outlier_handler.py && mv 05_differential_operator.py differential_operator.py && mv 06_resampler.py resampler.py && mv 07_normalizer.py normalizer.py)",
+      "Bash(python create_test_dataset.py)",
+      "Bash(python /mnt/workspace/gbn/project/test_invoke_data_method/create_test_dataset.py)",
+      "Bash(python test_skill_full.py)"
+    ]
+  }
+}
