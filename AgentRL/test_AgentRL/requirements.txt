@@ -1,0 +1,12 @@
+# AgentRL 数据处理优化系统依赖
+pandas>=1.3.0
+numpy>=1.21.0
+scikit-learn>=1.0.0
+stable-baselines3>=1.6.0
+gymnasium>=0.26.0
+lightgbm>=3.0.0
+xgboost>=1.5.0
+scipy>=1.7.0
+pywt>=1.3.0
+imblearn>=0.9.0
+statsmodels>=0.13.0
