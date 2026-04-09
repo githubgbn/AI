@@ -76,7 +76,34 @@ pip install -r requirements.txt
 
 ```bash
 cd test_AgentRL
+
+# 处理CSV文件（自动检测目标列）
+python main.py data.csv
+
+# 指定目标列
+python main.py data.csv --target label
+
+# 指定训练步数
+python main.py data.csv --timesteps 10000
+
+# 使用示例数据
 python main.py
+```
+
+## 输出示例
+
+```
+【精度对比】
+  模型                   处理前          处理后          提升
+  --------------------------------------------------------
+  random_forest        0.4242       0.6170       +0.1928
+  lightgbm             0.4848       0.7021       +0.2173
+  xgboost              0.4848       0.6596       +0.1747
+  --------------------------------------------------------
+  平均                   0.4646       0.6596       +0.1949
+
+【最佳模型】
+  lightgbm: 准确率 0.7021, F1 0.7005
 ```
 
 ## 项目结构

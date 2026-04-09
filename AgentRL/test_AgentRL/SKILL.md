@@ -1,19 +1,65 @@
 ---
 name: test_AgentRL
 description: |
-  当用户要求创建AgentRL项目、构建强化学习数据处理系统、或需要实现PPO优化数据处理流水线时触发本skill。
-  此skill用于：1）创建一个基于PPO强化学习的数据处理优化系统；2）支持多种数据处理算法（缺失值、滤波降噪、异常处理、差分算子、重采样、标准化等）；3）通过RL自动选择最优数据处理组合以提升随机森林/LightGBM/XGBoost等模型的预测精度。
-  用户可能描述为："创建AgentRL项目"、"用强化学习优化数据处理"、"提升预测模型精度"等。
+  当用户需要处理CSV文件并提升预测模型精度时触发本skill。
+  用法：直接运行 `python main.py [csv_file]` 即可自动处理CSV文件，通过PPO强化学习优化数据处理流水线，无需额外配置。
+  支持：自动检测目标列、自动选择最优处理算法、展示精度提升效果。
+  用户可能描述为："处理这个CSV文件"、"优化数据"、"提升预测精度"等。
 compatibility: Python 3.8+, stable-baselines3, scikit-learn, lightgbm, xgboost, pandas, numpy
 ---
 
 # AgentRL 数据处理优化系统
 
-本skill实现一个基于PPO（Proximal Policy Optimization）强化学习的数据处理优化系统，用于自动学习最优的数据处理流水线配置，从而提升预测模型的精度。
+## 快速使用
 
-## 系统目标
+### 命令行直接运行
 
-通过强化学习自动探索最优的数据处理组合，包括：缺失值处理、异常处理、滤波降噪、差分算子、重采样、标准化/归一化等步骤，最终输出最优配置并提升随机森林、LightGBM、XGBoost三种模型的预测精度。
+```bash
+cd test_AgentRL
+
+# 处理CSV文件（自动检测目标列）
+python main.py data.csv
+
+# 指定目标列
+python main.py data.csv --target label
+
+# 指定训练步数
+python main.py data.csv --timesteps 10000
+
+# 使用示例数据（不提供CSV）
+python main.py
+```
+
+### 参数说明
+
+| 参数 | 说明 |
+|------|------|
+| `csv_file` | CSV文件路径（可选，不提供则使用示例数据） |
+| `--target, -t` | 目标列列名（可选，自动检测 target/label/y/最后一列） |
+| `--timesteps` | PPO训练步数（默认5000） |
+
+### 输出示例
+
+```
+【精度对比】
+  模型                   处理前          处理后          提升
+  --------------------------------------------------------
+  random_forest        0.4242       0.6170       +0.1928
+  lightgbm             0.4848       0.7021       +0.2173
+  xgboost              0.4848       0.6596       +0.1747
+  --------------------------------------------------------
+  平均                   0.4646       0.6596       +0.1949
+
+【最佳模型】
+  lightgbm: 准确率 0.7021, F1 0.7005
+```
+
+## 系统功能
+
+- **自动数据处理**：缺失值填充、异常值处理、滤波降噪、差分、重采样、标准化
+- **29种算法**：缺失值8种、异常处理4种、滤波5种、差分3种、重采样4种、标准化5种
+- **PPO强化学习**：自动探索最优处理组合
+- **多模型评估**：随机森林、LightGBM、XGBoost
 
 ## 项目结构
 
@@ -22,7 +68,7 @@ test_AgentRL/
 ├── config/
 │   └── config.py              # 配置文件
 ├── data/
-│   └── processor.py           # 数据处理流水线（7种处理步骤）
+│   └── processor.py           # 数据处理流水线
 ├── env/
 │   └── rl_env.py              # 强化学习环境
 ├── agent/
@@ -33,51 +79,6 @@ test_AgentRL/
 ├── requirements.txt           # 依赖
 └── README.md                   # 说明文档
 ```
-
-## 实现步骤
-
-### 第一步：创建项目目录结构
-
-```bash
-mkdir -p test_AgentRL/{config,data,env,agent,models}
-```
-
-### 第二步：创建配置文件 config/config.py
-
-定义所有数据处理算法的配置，包括7个处理步骤：
-
-```python
-# 缺失值处理算法
-MISSING_VALUE_METHODS = {
-    'delete': '删除缺失行',
-    'mean': '均值填充',
-    'median': '中位数填充',
-    'forward_fill': '前向填充',
-    'backward_fill': '后向填充',
-    'interpolate': '插值填充',
-    'knn': 'KNN填充',
-    'multivariate_impute': '多重插补'
-}
-
-# 异常处理算法
-ANOMALY_METHODS = {
-    'zscore': 'Z-score方法',
-    'iqr': 'IQR方法',
-    'isolation_forest': '孤立森林',
-    'percentile': '百分位法'
-}
-
-# 滤波降噪算法
-FILTER_METHODS = {
-    'median_filter': '中值滤波',
-    'mean_filter': '均值滤波',
-    'gaussian_filter': '高斯滤波',
-    'kalman_filter': '卡尔曼滤波',
-    'wavelet_denoise': '小波降噪'
-}
-
-# 差分算子算法
-DIFF_METHODS = {
     'first_order': '一阶差分',
     'second_order': '二阶差分',
     'seasonal_diff': '季节性差分'
