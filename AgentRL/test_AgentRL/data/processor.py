@@ -19,7 +19,7 @@ class DataProcessor:
     def __init__(self):
         self.config = {}
 
-    def process_missing_value(self, df, method='mean'):
+    def process_missing_value(self, df, method='mean', target_column=None):
         """缺失值处理
 
         Args:
@@ -33,26 +33,43 @@ class DataProcessor:
                 - interpolate: 插值填充
                 - knn: KNN填充
                 - multivariate_impute: 多重插补
+            target_column: 目标变量列名（填充时跳过）
         """
         if df is None or len(df) == 0:
             return df
 
         df = df.copy()
+        numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+
+        # 跳过目标列
+        if target_column and target_column in numeric_cols:
+            numeric_cols.remove(target_column)
 
         if method == 'delete':
             return df.dropna()
         elif method == 'mean':
-            return df.fillna(df.mean())
+            fill_values = df.mean()
+            if target_column and target_column in fill_values.index:
+                fill_values = fill_values.drop(target_column)
+            return df.fillna(fill_values)
         elif method == 'median':
-            return df.fillna(df.median())
+            fill_values = df.median()
+            if target_column and target_column in fill_values.index:
+                fill_values = fill_values.drop(target_column)
+            return df.fillna(fill_values)
         elif method == 'forward_fill':
-            return df.fillna(method='ffill')
+            for col in numeric_cols:
+                df[col] = df[col].ffill()
+            return df
         elif method == 'backward_fill':
-            return df.fillna(method='bfill')
+            for col in numeric_cols:
+                df[col] = df[col].bfill()
+            return df
         elif method == 'interpolate':
-            return df.interpolate(method='linear')
+            for col in numeric_cols:
+                df[col] = df[col].interpolate(method='linear')
+            return df
         elif method == 'knn':
-            numeric_cols = df.select_dtypes(include=[np.number]).columns
             if len(numeric_cols) > 0:
                 imputer = KNNImputer(n_neighbors=min(5, len(df)))
                 df[numeric_cols] = imputer.fit_transform(df[numeric_cols])
@@ -60,7 +77,6 @@ class DataProcessor:
         elif method == 'multivariate_impute':
             from sklearn.experimental import enable_iterative_imputer
             from sklearn.impute import IterativeImputer
-            numeric_cols = df.select_dtypes(include=[np.number]).columns
             if len(numeric_cols) > 0:
                 imputer = IterativeImputer(max_iter=10)
                 df[numeric_cols] = imputer.fit_transform(df[numeric_cols])
@@ -348,7 +364,7 @@ class DataProcessor:
             return df
 
         # 按顺序执行各处理步骤
-        df = self.process_missing_value(df, config.get('missing_method', 'mean'))
+        df = self.process_missing_value(df, config.get('missing_method', 'mean'), target_column)
         if df is None or len(df) < 5:
             return pd.DataFrame(columns=df.columns) if df is not None else df
 
