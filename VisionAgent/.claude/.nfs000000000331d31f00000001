@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "Bash(curl -sL \"https://api.github.com/repos/GetStream/Vision-Agents\")",
+      "Bash(curl -sL \"https://raw.githubusercontent.com/GetStream/Vision-Agents/main/README.md\")",
+      "Bash(curl -sL \"https://api.github.com/repos/GetStream/Vision-Agents/contents\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(d['name'], d['type']\\) for d in data]\")",
+      "Bash(curl -sL \"https://api.github.com/repos/GetStream/Vision-Agents/contents/examples\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(d['name']\\) for d in data]\")",
+      "Bash(curl -sL \"https://api.github.com/repos/GetStream/Vision-Agents/contents/examples/02_golf_coach_example\")",
+      "Bash(curl *)",
+      "Bash(python3 -m py_compile boiling_water_processor.py demo_local.py demo_agent.py)",
+      "Bash(chmod +x /mnt/workspace/gbn/project/VisionAgent/vision_agent_demo/references/tests/run_all_tests.sh)",
+      "Bash(/mnt/workspace/gbn/project/VisionAgent/vision_agent_demo/references/tests/run_all_tests.sh)",
+      "Bash(python3 generate_test_video.py)",
+      "Bash(python3 tests/verify_with_video.py)"
+    ]
+  }
+}
